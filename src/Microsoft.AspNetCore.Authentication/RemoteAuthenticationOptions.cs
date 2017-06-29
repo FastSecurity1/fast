@@ -3,6 +3,7 @@
 
 using System;
 using System.Net.Http;
+using Microsoft.AspNetCore.Authentication.Internal;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 
@@ -13,6 +14,24 @@ namespace Microsoft.AspNetCore.Authentication
     /// </summary>
     public class RemoteAuthenticationOptions : AuthenticationSchemeOptions
     {
+        internal const string CorrelationPrefix = ".AspNetCore.Correlation.";
+
+        private CookieBuilder _correlationIdCookieBuilder;
+
+        /// <summary>
+        /// Initializes a new <see cref="RemoteAuthenticationOptions"/>.
+        /// </summary>
+        public RemoteAuthenticationOptions()
+        {
+            _correlationIdCookieBuilder = new CorrelationIdCookieBuilder(this)
+            {
+                Name = CorrelationPrefix,
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                SecurePolicy = CookieSecurePolicy.SameAsRequest,
+            };
+        }
+
         /// <summary>
         /// Check that the options are valid.  Should throw an exception if things are not ok.
         /// </summary>
@@ -71,8 +90,8 @@ namespace Microsoft.AspNetCore.Authentication
 
         public new RemoteAuthenticationEvents Events
         {
-            get { return (RemoteAuthenticationEvents)base.Events; }
-            set { base.Events = value; }
+            get => (RemoteAuthenticationEvents)base.Events;
+            set => base.Events = value;
         }
 
         /// <summary>
@@ -84,9 +103,37 @@ namespace Microsoft.AspNetCore.Authentication
         public bool SaveTokens { get; set; }
 
         /// <summary>
-        /// Gets or sets an action that can override the correlation id cookie options before the
+        /// Determines the settings used to create the correlation id cookie before the
         /// cookie gets added to the response.
         /// </summary>
-        public Action<HttpContext, CookieOptions> ConfigureCorrelationIdCookie { get; set; }
+        public CookieBuilder CorrelationIdCookie
+        {
+            get => _correlationIdCookieBuilder;
+            set => _correlationIdCookieBuilder = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        private class CorrelationIdCookieBuilder : PathScopingCookieBuilder
+        {
+            private readonly RemoteAuthenticationOptions _optoins;
+
+            public CorrelationIdCookieBuilder(RemoteAuthenticationOptions remoteAuthenticationOptions)
+            {
+                _optoins = remoteAuthenticationOptions;
+            }
+
+            protected override string PathScope => _optoins.CallbackPath;
+
+            public override CookieOptions Build(HttpContext context, DateTimeOffset expiresFrom)
+            {
+                var cookieOptions = base.Build(context, expiresFrom);
+
+                if (!Expiration.HasValue || !cookieOptions.Expires.HasValue)
+                {
+                    cookieOptions.Expires = expiresFrom.Add(_optoins.RemoteAuthenticationTimeout);
+                }
+
+                return cookieOptions;
+            }
+        }
     }
 }
