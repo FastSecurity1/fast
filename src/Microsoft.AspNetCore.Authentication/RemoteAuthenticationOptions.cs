@@ -112,7 +112,7 @@ namespace Microsoft.AspNetCore.Authentication
             set => _correlationIdCookieBuilder = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        private class CorrelationIdCookieBuilder : RequestPathCookieBuilder
+        private class CorrelationIdCookieBuilder : RequestPathBaseCookieBuilder
         {
             private readonly RemoteAuthenticationOptions _options;
 

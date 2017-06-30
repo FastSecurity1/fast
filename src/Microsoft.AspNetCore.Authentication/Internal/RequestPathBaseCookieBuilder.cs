@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Http;
 namespace Microsoft.AspNetCore.Authentication.Internal
 {
     /// <summary>
-    /// A cookie builder that set <see cref="CookieOptions.Path"/> to the original path base plus some scope.
+    /// A cookie builder that sets <see cref="CookieOptions.Path"/> to the request path base.
     /// </summary>
-    public class RequestPathCookieBuilder : CookieBuilder
+    public class RequestPathBaseCookieBuilder : CookieBuilder
     {
         /// <summary>
-        /// Optional additional path that is appended to the request path base.
+        /// Gets an optional value that is appended to the request path base.
         /// </summary>
         protected virtual string AdditionalPath { get; }
 

@@ -282,7 +282,7 @@ namespace Microsoft.AspNetCore.Authentication.OpenIdConnect
             set => _nonceCookieBuilder = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        private class OpenIdConnectNonceCookieBuilder : RequestPathCookieBuilder
+        private class OpenIdConnectNonceCookieBuilder : RequestPathBaseCookieBuilder
         {
             private readonly OpenIdConnectOptions _options;
 
