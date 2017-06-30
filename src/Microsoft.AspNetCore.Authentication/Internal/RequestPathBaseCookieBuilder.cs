@@ -28,7 +28,9 @@ namespace Microsoft.AspNetCore.Authentication.Internal
 
             var options = base.Build(context, expiresFrom);
 
-            options.Path = path ?? "/";
+            options.Path = !string.IsNullOrEmpty(path)
+                ? path
+                : "/";
 
             return options;
         }
