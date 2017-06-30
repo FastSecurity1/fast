@@ -913,12 +913,7 @@ namespace Microsoft.AspNetCore.Authentication.OpenIdConnect
                         var nonceDecodedValue = Options.StringDataFormat.Unprotect(nonceKey.Substring(Options.NonceCookie.Name.Length, nonceKey.Length - Options.NonceCookie.Name.Length));
                         if (nonceDecodedValue == nonce)
                         {
-                            var cookieOptions = Options.NonceCookie.Build(Context);
-                            if (Options.NonceCookie.Path == null)
-                            {
-                                cookieOptions.Path = OriginalPathBase + Options.CallbackPath;
-                            }
-
+                            var cookieOptions = Options.NonceCookie.Build(Context, Clock.UtcNow);
                             Response.Cookies.Delete(nonceKey, cookieOptions);
                             return nonce;
                         }
