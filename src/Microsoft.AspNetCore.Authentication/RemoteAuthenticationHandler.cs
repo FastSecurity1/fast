@@ -185,11 +185,11 @@ namespace Microsoft.AspNetCore.Authentication
             CryptoRandom.GetBytes(bytes);
             var correlationId = Base64UrlTextEncoder.Encode(bytes);
 
-            var cookieOptions = Options.CorrelationIdCookie.Build(Context, Clock.UtcNow);
+            var cookieOptions = Options.CorrelationCookie.Build(Context, Clock.UtcNow);
 
             properties.Items[CorrelationProperty] = correlationId;
 
-            var cookieName = Options.CorrelationIdCookie.Name + Scheme.Name + "." + correlationId;
+            var cookieName = Options.CorrelationCookie.Name + Scheme.Name + "." + correlationId;
 
             Response.Cookies.Append(cookieName, CorrelationMarker, cookieOptions);
         }
@@ -209,7 +209,7 @@ namespace Microsoft.AspNetCore.Authentication
 
             properties.Items.Remove(CorrelationProperty);
 
-            var cookieName = Options.CorrelationIdCookie.Name + Scheme.Name + "." + correlationId;
+            var cookieName = Options.CorrelationCookie.Name + Scheme.Name + "." + correlationId;
 
             var correlationCookie = Request.Cookies[cookieName];
             if (string.IsNullOrEmpty(correlationCookie))
@@ -218,7 +218,7 @@ namespace Microsoft.AspNetCore.Authentication
                 return false;
             }
 
-            var cookieOptions = Options.CorrelationIdCookie.Build(Context, Clock.UtcNow);
+            var cookieOptions = Options.CorrelationCookie.Build(Context, Clock.UtcNow);
 
             Response.Cookies.Delete(cookieName, cookieOptions);
 

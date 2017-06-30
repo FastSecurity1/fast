@@ -143,7 +143,7 @@ namespace Microsoft.AspNetCore.Authentication.Test.OpenIdConnect
                 {
                     AuthorizationEndpoint = "https://example.com/provider/login"
                 };
-                opt.CorrelationIdCookie.Path = "/";
+                opt.CorrelationCookie.Path = "/";
             });
 
             var server = setting.CreateTestServer();

@@ -16,14 +16,14 @@ namespace Microsoft.AspNetCore.Authentication
     {
         internal const string CorrelationPrefix = ".AspNetCore.Correlation.";
 
-        private CookieBuilder _correlationIdCookieBuilder;
+        private CookieBuilder _correlationCookieBuilder;
 
         /// <summary>
         /// Initializes a new <see cref="RemoteAuthenticationOptions"/>.
         /// </summary>
         public RemoteAuthenticationOptions()
         {
-            _correlationIdCookieBuilder = new CorrelationIdCookieBuilder(this)
+            _correlationCookieBuilder = new CorrelationCookieBuilder(this)
             {
                 Name = CorrelationPrefix,
                 HttpOnly = true,
@@ -103,20 +103,20 @@ namespace Microsoft.AspNetCore.Authentication
         public bool SaveTokens { get; set; }
 
         /// <summary>
-        /// Determines the settings used to create the correlation id cookie before the
+        /// Determines the settings used to create the correlation cookie before the
         /// cookie gets added to the response.
         /// </summary>
-        public CookieBuilder CorrelationIdCookie
+        public CookieBuilder CorrelationCookie
         {
-            get => _correlationIdCookieBuilder;
-            set => _correlationIdCookieBuilder = value ?? throw new ArgumentNullException(nameof(value));
+            get => _correlationCookieBuilder;
+            set => _correlationCookieBuilder = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        private class CorrelationIdCookieBuilder : RequestPathBaseCookieBuilder
+        private class CorrelationCookieBuilder : RequestPathBaseCookieBuilder
         {
             private readonly RemoteAuthenticationOptions _options;
 
-            public CorrelationIdCookieBuilder(RemoteAuthenticationOptions remoteAuthenticationOptions)
+            public CorrelationCookieBuilder(RemoteAuthenticationOptions remoteAuthenticationOptions)
             {
                 _options = remoteAuthenticationOptions;
             }
