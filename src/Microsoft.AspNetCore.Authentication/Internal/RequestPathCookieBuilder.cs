@@ -9,12 +9,12 @@ namespace Microsoft.AspNetCore.Authentication.Internal
     /// <summary>
     /// A cookie builder that set <see cref="CookieOptions.Path"/> to the original path base plus some scope.
     /// </summary>
-    public abstract class PathScopingCookieBuilder : CookieBuilder
+    public class RequestPathCookieBuilder : CookieBuilder
     {
         /// <summary>
-        /// Path that is appended to the request path base.
+        /// Optional additional path that is appended to the request path base.
         /// </summary>
-        protected abstract string PathScope { get; }
+        protected virtual string AdditionalPath { get; }
 
         public override CookieOptions Build(HttpContext context, DateTimeOffset expiresFrom)
         {
@@ -23,7 +23,7 @@ namespace Microsoft.AspNetCore.Authentication.Internal
             if (path == null)
             {
                 var originalPathBase = context.Features.Get<IAuthenticationFeature>()?.OriginalPathBase ?? context.Request.PathBase;
-                path = originalPathBase + PathScope;
+                path = originalPathBase + AdditionalPath;
             }
 
             var options = base.Build(context, expiresFrom);

@@ -112,16 +112,16 @@ namespace Microsoft.AspNetCore.Authentication
             set => _correlationIdCookieBuilder = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        private class CorrelationIdCookieBuilder : PathScopingCookieBuilder
+        private class CorrelationIdCookieBuilder : RequestPathCookieBuilder
         {
-            private readonly RemoteAuthenticationOptions _optoins;
+            private readonly RemoteAuthenticationOptions _options;
 
             public CorrelationIdCookieBuilder(RemoteAuthenticationOptions remoteAuthenticationOptions)
             {
-                _optoins = remoteAuthenticationOptions;
+                _options = remoteAuthenticationOptions;
             }
 
-            protected override string PathScope => _optoins.CallbackPath;
+            protected override string AdditionalPath => _options.CallbackPath;
 
             public override CookieOptions Build(HttpContext context, DateTimeOffset expiresFrom)
             {
@@ -129,7 +129,7 @@ namespace Microsoft.AspNetCore.Authentication
 
                 if (!Expiration.HasValue || !cookieOptions.Expires.HasValue)
                 {
-                    cookieOptions.Expires = expiresFrom.Add(_optoins.RemoteAuthenticationTimeout);
+                    cookieOptions.Expires = expiresFrom.Add(_options.RemoteAuthenticationTimeout);
                 }
 
                 return cookieOptions;

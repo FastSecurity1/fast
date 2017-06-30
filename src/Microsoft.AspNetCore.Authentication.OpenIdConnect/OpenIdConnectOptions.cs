@@ -282,7 +282,7 @@ namespace Microsoft.AspNetCore.Authentication.OpenIdConnect
             set => _nonceCookieBuilder = value ?? throw new ArgumentNullException(nameof(value));
         }
 
-        private class OpenIdConnectNonceCookieBuilder : PathScopingCookieBuilder
+        private class OpenIdConnectNonceCookieBuilder : RequestPathCookieBuilder
         {
             private readonly OpenIdConnectOptions _options;
 
@@ -291,7 +291,7 @@ namespace Microsoft.AspNetCore.Authentication.OpenIdConnect
                 _options = oidcOptions;
             }
 
-            protected override string PathScope => _options.CallbackPath;
+            protected override string AdditionalPath => _options.CallbackPath;
 
             public override CookieOptions Build(HttpContext context, DateTimeOffset expiresFrom)
             {
